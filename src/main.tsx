@@ -1,4 +1,3 @@
-import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { useRef } from "react";
 import { Provider } from "react-redux";

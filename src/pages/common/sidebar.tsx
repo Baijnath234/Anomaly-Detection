@@ -84,7 +84,7 @@ const Sidebar: React.FC<SidebarProps> = ({ setSidebarOpen, setActivePage, active
         </IconButton>
         {open && (
           <Typography variant="h6" noWrap sx={{ marginLeft: 1 }}>
-            VEBUIN
+            DETECT AI
           </Typography>
         )}
       </Toolbar>

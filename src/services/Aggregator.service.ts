@@ -17,7 +17,6 @@ export const createModel = async (modelData: any) => {
     return response.data;
 
   } catch (error: any) {
-    // Enhanced error handling
     if (error.response) {
       console.error('Backend responded with error:', error.response.data);
       console.error('Status code:', error.response.status);
@@ -27,6 +26,13 @@ export const createModel = async (modelData: any) => {
       console.error('Error setting up request:', error.message);
     }
 
-    throw new Error(`Error creating model: ${error.message}`);
+    const responseDetails = error.response?.data?.message ?? error.response?.data;
+    const message = responseDetails
+      ? typeof responseDetails === 'string'
+        ? responseDetails
+        : JSON.stringify(responseDetails)
+      : error.message;
+
+    throw new Error(`Error creating model: ${message}`);
   }
 };

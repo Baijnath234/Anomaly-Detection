@@ -40,6 +40,8 @@ const RegisterPage: React.FC = () => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  console.log({ password });
+  
   const [confirmPassword, setConfirmPassword] = useState('');
 
   const [errors, setErrors] = useState({

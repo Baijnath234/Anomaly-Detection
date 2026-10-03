@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Box, Typography } from "@mui/material";
+import { Alert, Box, Typography } from "@mui/material";
 import { makeStyles } from "tss-react/mui";
 import Tabs from "../CraeteModelVersion/Tabs";
 import PlantDetails from "./PlantDetails";
@@ -8,7 +8,7 @@ import ScheduleDetails from "./ScheduleDetails";
 import TrainingCondition from "./TrainingCondition";
 import GridSearch from "./GridSearch";
 import { createModel } from "../../services/Aggregator.service";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const API_BASE_URL = "http://localhost:3000";
@@ -25,6 +25,7 @@ const useStyles = makeStyles()((theme) => ({
 const CreateBaseVersionPage: React.FC = () => {
   const { classes } = useStyles();
   const { state } = useLocation();
+  const navigate = useNavigate();
   const modelId = state?.modelId;
   const [modelData, setModelData] = useState(null);
 
@@ -189,6 +190,7 @@ const CreateBaseVersionPage: React.FC = () => {
   // API Submission
   const handleSubmit = async (e: any) => {
     e.preventDefault();
+    setError("");
     console.log("Updating model data:", modelData);
     try {
       setLoading(true);
@@ -203,90 +205,48 @@ const CreateBaseVersionPage: React.FC = () => {
         endDate: dateRange?.endDate
           ? new Date(dateRange.endDate).toISOString()
           : null,
-        tags: "tag1,tag2",
+        tags: selectedTags.map((tag) => tag.label).join(","),
         layers: gridSearchParams.layers,
         nodes: gridSearchParams.nodes,
         batches: gridSearchParams.batches,
         maxEpochs: gridSearchParams.maxEpochs,
-        PIDs: selectedTags.map((tag) => ({
-          type: tag.type,
-          trainCount: tag.trainCount || 50,
-          trainMean: tag.trainMean || 20,
-          trainStd: tag.trainStd || 5,
-          trainMin: tag.trainMin || 1,
-          trainMax: tag.trainMax || 100,
-          train25Perc: tag.train25Perc || 10,
-          train50Perc: tag.train50Perc || 20,
-          train75Perc: tag.train75Perc || 30,
-          isOutput: tag.isOutput ?? true,
-          isMonitor: tag.isMonitor ?? false,
-          included: tag.included ?? true,
+        pids: selectedTags.map((tag) => ({
+          pid: tag.label,
+          name: tag.label,
         })),
-        grid: {
-          batches: [parseInt(gridSearchParams.batches, 10) || 16, 32],
-          layers: [parseInt(gridSearchParams.layers, 10) || 3, 5],
-          maxEpochs: [parseInt(gridSearchParams.maxEpochs, 10) || 50, 100],
-          nodes: [parseInt(gridSearchParams.nodes, 10) || 64, 128],
-          rates: [0.01, 0.001],
-        },
-        schedule: {
-          startDate: new Date(
-            dateRange?.startDate || "2025-01-01"
-          ).toISOString(),
-          endDate: new Date(dateRange?.endDate || "2025-01-31").toISOString(),
-          PIDs: ["PID1", "PID2"],
-          timePeriods: [
-            {
-              start: new Date(
-                dateRange?.startDate || "2025-01-01"
-              ).toISOString(),
-              end: new Date(dateRange?.endDate || "2025-01-15").toISOString(),
-            },
-          ],
-        },
-        loadCondition: {
-          conditions: conditions.map((condition) => ({
-            pid: condition.tag || "PID1",
-            lower: condition.lowerValue || "10",
-            upper: condition.upperValue || "100",
-            loadId: "Load1",
-            isUsed: true,
-            isLowerEqualityStrict: condition.lowerEquality === ">=",
-            isUpperEqualityStrict: condition.upperEquality === "<=",
-            createdAt: new Date().toISOString(),
-          })),
-        },
-        mlModel: {
-          key: 123,
-          uuid: "uuid-123",
-          name: formData.model.trim(),
-          nameJp: "モデル X",
-          description: formData.description || "Test model",
-          version: "1.0",
-          plant: formData.powerPlant.trim(),
-          unit: formData.unit.trim(),
-          branch: formData.branch.trim(),
+        gridSearchParams: [
+          {
+            batches: [parseInt(gridSearchParams.batches, 10) || 16],
+            layers: [parseInt(gridSearchParams.layers, 10) || 3],
+            maxEpochs: [parseInt(gridSearchParams.maxEpochs, 10) || 50],
+            nodes: [parseInt(gridSearchParams.nodes, 10) || 64],
+            rates: [0.01, 0.001],
+          },
+        ],
+        loadConditions: conditions.map((condition) => ({
+          pid: condition.tag,
+          lower: condition.lowerValue || "10",
+          upper: condition.upperValue || "100",
+          loadId: "Load1",
+          isUsed: true,
+          isLowerEqualityStrict: condition.lowerEquality === ">=",
+          isUpperEqualityStrict: condition.upperEquality === "<=",
           createdAt: new Date().toISOString(),
-          status: "trained",
-          isNewest: true,
-          isStopped: false,
-          isCountReset: false,
-          specialKey: 1014,
-          specialUuid: "uuid-1014",
-          deletionInProgress: false,
-        },
-        monitorAlarmTags: ["tag1", "tag2"],
-        sensorAlarmConditions: ["condition1", "condition2"],
+        })),
+        monitorAlarmTags: selectedTags
+          .filter((tag) => tag.type === "MONITOR")
+          .map((tag) => tag.label),
       };
 
       console.log("Payload being sent:", payload);
 
-      const response = await createModel(payload);
-      console.log(response, "response");
-      setSuccess("Python says: Hello World!");
+      await createModel(payload);
       setSuccess("Model created successfully!");
       setNotification("Model created successfully!");
-      setTimeout(() => setNotification(null), 3000);
+      setTimeout(() => {
+        setNotification(null);
+        navigate("/dashboard/modelList");
+      }, 1200);
       setLoading(false);
 
       // Clear all inputs
@@ -316,6 +276,8 @@ const CreateBaseVersionPage: React.FC = () => {
       ]);
     } catch (err: any) {
       setError(err.message || "An error occurred");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -393,6 +355,11 @@ const CreateBaseVersionPage: React.FC = () => {
             handleSubmit={handleSubmit}
             isGridSearchValid={isGridSearchValid}
           />
+          {error && (
+            <Alert severity="error" sx={{ mb: 2 }}>
+              {error}
+            </Alert>
+          )}
           {activeTab === 0 && (
             <PlantDetails
               error={error}

@@ -62,11 +62,12 @@ const ModelList = () => {
           status: item.endDate ? "Deployed" : "Stopped",
           created: item.endDate || "N/A",
           branch: item.branch,
-          tags: item.pids.map((i: any) => i.type),
-          pids: item.loadConditions.map((i: any) => i.pid),
+          tags: (item.pids ?? []).map((pid: any) => pid.name || pid.pid),
+          pids: (item.loadConditions ?? []).map((condition: any) => condition.pid),
         }));
 
         setRows(processedRows);
+        setError("");
       } catch (err) {
         console.error("Error fetching data:", err);
         setError("Failed to load data.");
