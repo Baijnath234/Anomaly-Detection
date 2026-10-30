@@ -1,6 +1,9 @@
-import { ColumnSortMetaData } from 'primereact/column';
-import { IPermissionDto, IPermissionItem, PermissionsEnum } from '~/_submodules/JAIME-SharedInterfaces/permissions';
-import { RelationStringValue, RelationValue } from './common';
+export type ColumnSortMetaData = any;
+export type IPermissionDto = any;
+export type IPermissionItem = any;
+export type PermissionsEnum = any;
+export type RelationStringValue = any;
+export type RelationValue = any;
 
 export interface UserListItem {
   externalId: string;

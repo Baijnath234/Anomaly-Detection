@@ -16,7 +16,7 @@ type IPermissions = { [key in PermissionsEnum]: IPermissionItem };
 /* for additional information
   @see:  https://jerainfopulse.atlassian.net/wiki/spaces/JD/pages/561446917/Functional+Permissions+v2+draft
 */
-export const PERMISSION_DETAIL: IPermissions = {
+export const PERMISSION_DETAIL: any = {
   [PermissionsEnum.admin_permission]: {
     section: permissionSections.systems,
     name: "Admin permission",

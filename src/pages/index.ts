@@ -1,2 +1,8 @@
-
 export { default as SignInPage } from './SingInPage/index';
+export { DashboardPage } from './DashboardPage';
+export { UploadPage } from './UploadPage';
+export { AnalysisPage } from './AnalysisPage';
+export { ProblemsPage } from './ProblemsPage';
+export { ExpiryPage } from './ExpiryPage';
+export { LiveMonitorPage } from './LiveMonitorPage';
+export { ReportsPage } from './ReportsPage';
