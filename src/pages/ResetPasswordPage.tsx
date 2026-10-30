@@ -9,6 +9,7 @@ import {
   TextField,
   Avatar,
   Alert,
+  CircularProgress,
 } from '@mui/material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { pink } from '@mui/material/colors';
@@ -16,11 +17,13 @@ import { pink } from '@mui/material/colors';
 const ResetPasswordPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { email } = location.state || {};
+  const { email, otp: stateOtp } = location.state || {};
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [otp, setOtp] = useState('');
+  const [otp, setOtp] = useState(stateOtp || '');
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const passwordIsValid = (password: string) => {
     return (
@@ -35,6 +38,17 @@ const ResetPasswordPage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    setSuccess(null);
+
+    if (!email) {
+      setError('Email is missing. Please restart the forgot password process.');
+      return;
+    }
+
+    if (!otp) {
+      setError('OTP is required.');
+      return;
+    }
 
     if (!passwordIsValid(newPassword)) {
       setError(
@@ -48,12 +62,19 @@ const ResetPasswordPage: React.FC = () => {
       return;
     }
 
+    setLoading(true);
     try {
       await resetPassword(email, otp, newPassword);
-      navigate('/login');
-    } catch (error) {
-      setError('Password reset failed. Please try again.');
-      console.error('Password reset failed:', error);
+      setSuccess('Password has been successfully reset! Redirecting to sign in...');
+      setTimeout(() => {
+        navigate('/login');
+      }, 1500);
+    } catch (err: any) {
+      const msg = err.response?.data?.message || 'Password reset failed. Please try again.';
+      setError(msg);
+      console.error('Password reset failed:', err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -62,7 +83,7 @@ const ResetPasswordPage: React.FC = () => {
       <CssBaseline />
       <div
         style={{
-          marginTop: '64px', // Adjust top margin as needed
+          marginTop: '64px',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
@@ -74,8 +95,26 @@ const ResetPasswordPage: React.FC = () => {
         <Typography component="h1" variant="h5">
           Reset Password
         </Typography>
-        {error && <Alert severity="error">{error}</Alert>}
+        {email && (
+          <Typography variant="body2" color="textSecondary" style={{ marginTop: 8 }}>
+            Resetting password for <strong>{email}</strong>
+          </Typography>
+        )}
+        {error && <Alert severity="error" style={{ width: '100%', marginTop: 8 }}>{error}</Alert>}
+        {success && <Alert severity="success" style={{ width: '100%', marginTop: 8 }}>{success}</Alert>}
         <form onSubmit={handleSubmit} style={{ width: '100%', marginTop: '8px' }}>
+          {!stateOtp && (
+            <TextField
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              label="Enter OTP"
+              value={otp}
+              onChange={(e) => setOtp(e.target.value)}
+              disabled={loading}
+            />
+          )}
           <TextField
             variant="outlined"
             margin="normal"
@@ -85,6 +124,7 @@ const ResetPasswordPage: React.FC = () => {
             type="password"
             value={newPassword}
             onChange={(e) => setNewPassword(e.target.value)}
+            disabled={loading}
             helperText="Must be at least 8 characters, with uppercase, lowercase, number, and special character."
           />
           <TextField
@@ -96,15 +136,17 @@ const ResetPasswordPage: React.FC = () => {
             type="password"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
+            disabled={loading}
           />
           <Button
             type="submit"
             fullWidth
             variant="contained"
             color="primary"
-            disabled={!otp || !newPassword || !confirmPassword}
+            disabled={!otp || !newPassword || !confirmPassword || loading}
+            style={{ marginTop: 16 }}
           >
-            Reset Password
+            {loading ? <CircularProgress size={24} /> : 'Reset Password'}
           </Button>
         </form>
       </div>

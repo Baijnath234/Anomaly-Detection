@@ -42,10 +42,9 @@ const ForgetPasswordPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-  const [emailError, setEmailError] = useState(''); // New state for email error
+  const [emailError, setEmailError] = useState('');
 
   const validateEmail = (email: string) => {
-    // Regex for basic email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
@@ -55,7 +54,6 @@ const ForgetPasswordPage: React.FC = () => {
     setError('');
     setSuccess('');
 
-    // Check for email validity
     if (!validateEmail(contactInfo)) {
       setEmailError('Please enter a valid email address.');
       return;
@@ -65,12 +63,15 @@ const ForgetPasswordPage: React.FC = () => {
     setEmailError('');
 
     try {
-      await forgotPassword(contactInfo);
-      setSuccess('OTP sent successfully! Please check your email.');
-      navigate('/otp-verification', { state: { email: contactInfo } });
-    } catch (error) {
-      setError("Failed to send OTP. Please try again.");
-      console.error("Error sending OTP:", error);
+      const res: any = await forgotPassword(contactInfo);
+      const devOtp = res?.data?.otp;
+      setSuccess(res?.data?.message || 'OTP sent successfully! Please check your email.');
+      navigate('/otp-verification', { state: { email: contactInfo, otp: devOtp } });
+    } catch (err: any) {
+      const rawMsg = err?.response?.data?.message || err?.message || 'Failed to send OTP. Please try again.';
+      const msg = Array.isArray(rawMsg) ? rawMsg.join(', ') : rawMsg;
+      setError(msg);
+      console.error('Error sending OTP:', err);
     } finally {
       setLoading(false);
     }
@@ -86,8 +87,8 @@ const ForgetPasswordPage: React.FC = () => {
         <Typography component="h1" variant="h5">
           Forgot Password
         </Typography>
-        {error && <Alert severity="error">{error}</Alert>}
-        {success && <Alert severity="success">{success}</Alert>}
+        {error && <Alert severity="error" style={{ width: '100%', marginTop: 8 }}>{error}</Alert>}
+        {success && <Alert severity="success" style={{ width: '100%', marginTop: 8 }}>{success}</Alert>}
         <form className={classes.form} onSubmit={handleSubmit}>
           <TextField
             variant="outlined"
@@ -111,6 +112,7 @@ const ForgetPasswordPage: React.FC = () => {
             error={!!emailError}
             helperText={emailError}
             aria-label="Enter your email address"
+            disabled={loading}
           />
           <Button
             type="submit"
