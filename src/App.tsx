@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, Navigate } from 'react-router-dom';
 import { AppLayout } from './components/layout/AppLayout';
 import {
   DashboardPage,
@@ -26,7 +26,7 @@ const App: React.FC = () => {
     <Routes>
       {/* 7 Anomaly Detection & Repair Assistant Pages inside AppLayout */}
       <Route element={<AppLayout />}>
-        <Route path="/" element={<ElectricalDashboardPage />} />
+        <Route path="/" element={<Navigate to="/electrical" replace />} />
         <Route path="/electrical" element={<ElectricalDashboardPage />} />
         <Route path="/automation" element={<SmartAutomationPage />} />
         <Route path="/dashboard" element={<DashboardPage />} />

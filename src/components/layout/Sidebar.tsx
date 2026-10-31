@@ -16,7 +16,7 @@ import {
 const NAV_ITEMS = [
   { label: 'Smart Electrical', path: '/electrical', icon: Zap },
   { label: 'Home Automation', path: '/automation', icon: Sliders },
-  { label: 'Dashboard', path: '/', icon: LayoutDashboard },
+  { label: 'System Dashboard', path: '/dashboard', icon: LayoutDashboard },
   { label: 'Upload & Configure', path: '/upload', icon: UploadCloud },
   { label: 'Analysis', path: '/analysis', icon: LineChart },
   { label: 'Problems & Repair', path: '/problems', icon: Wrench },
