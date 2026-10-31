@@ -12,6 +12,7 @@ import {
   SignInPage,
   ElectricalDashboardPage,
   SmartAutomationPage,
+  ConfiguratorPage,
 } from './pages';
 import Register from './pages/Register';
 import ForgotPassword from './pages/forgotPassword';
@@ -29,6 +30,7 @@ const App: React.FC = () => {
         <Route path="/" element={<Navigate to="/electrical" replace />} />
         <Route path="/electrical" element={<ElectricalDashboardPage />} />
         <Route path="/automation" element={<SmartAutomationPage />} />
+        <Route path="/configurator" element={<ConfiguratorPage />} />
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/upload" element={<UploadPage />} />
         <Route path="/analysis" element={<AnalysisPage />} />

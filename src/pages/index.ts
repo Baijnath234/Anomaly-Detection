@@ -8,3 +8,4 @@ export { LiveMonitorPage } from './LiveMonitorPage';
 export { ReportsPage } from './ReportsPage';
 export { ElectricalDashboardPage } from './ElectricalDashboardPage';
 export { SmartAutomationPage } from './SmartAutomationPage';
+export { ConfiguratorPage } from './ConfiguratorPage';

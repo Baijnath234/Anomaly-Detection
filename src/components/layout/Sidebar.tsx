@@ -11,6 +11,7 @@ import {
   Activity,
   Zap,
   Sliders,
+  Cpu,
   LogOut,
 } from 'lucide-react';
 import { useAppDispatch } from '../../features/common/hooks';
@@ -19,8 +20,9 @@ import { logout } from '../../features/common/authSlice';
 const NAV_ITEMS = [
   { label: 'Smart Electrical', path: '/electrical', icon: Zap },
   { label: 'Home Automation', path: '/automation', icon: Sliders },
+  { label: 'Device Configurator', path: '/configurator', icon: Cpu },
   { label: 'System Dashboard', path: '/dashboard', icon: LayoutDashboard },
-  { label: 'Upload & Configure', path: '/upload', icon: UploadCloud },
+  { label: 'Dataset Upload', path: '/upload', icon: UploadCloud },
   { label: 'Analysis', path: '/analysis', icon: LineChart },
   { label: 'Problems & Repair', path: '/problems', icon: Wrench },
   { label: 'Time to Expiry', path: '/expiry', icon: Hourglass },
