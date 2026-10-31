@@ -4,23 +4,23 @@ import { Dataset, DatasetPreview } from '../types';
 export const datasetsApi = {
   upload: async (
     file: File,
-    systemId: string,
-    name: string,
+    systemId?: string,
+    name?: string,
     timestampColumn?: string,
   ): Promise<Dataset> => {
     const formData = new FormData();
     formData.append('file', file);
-    formData.append('systemId', systemId);
-    formData.append('name', name);
+    if (systemId) {
+      formData.append('systemId', systemId);
+    }
+    if (name) {
+      formData.append('name', name);
+    }
     if (timestampColumn) {
       formData.append('timestampColumn', timestampColumn);
     }
 
-    const res = await apiClient.post('/api/datasets/upload', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
+    const res = await apiClient.post('/api/datasets/upload', formData);
     return res.data;
   },
 
@@ -39,4 +39,3 @@ export const datasetsApi = {
     return res.data;
   },
 };
-

@@ -100,6 +100,13 @@ export const UploadPage: React.FC = () => {
 
   const systems = systemsData?.items || [];
 
+  // Auto-select first system if none selected
+  React.useEffect(() => {
+    if (!activeSystemId && systems.length > 0) {
+      setActiveSystemId(systems[0].id);
+    }
+  }, [systems, activeSystemId, setActiveSystemId]);
+
   // Parse CSV via Papaparse
   const onDrop = useCallback((acceptedFiles: File[]) => {
     if (acceptedFiles.length === 0) return;
@@ -172,10 +179,8 @@ export const UploadPage: React.FC = () => {
       setErrorMessage('Please select a CSV file to upload.');
       return;
     }
-    if (!activeSystemId) {
-      setErrorMessage('Please select or create a monitored system.');
-      return;
-    }
+
+    const targetSystemId = activeSystemId || (systems[0]?.id ?? undefined);
 
     setIsProcessing(true);
     setErrorMessage(null);
@@ -185,13 +190,17 @@ export const UploadPage: React.FC = () => {
       setStepMessage('Uploading and parsing CSV telemetry...');
       const uploadedDataset = await datasetsApi.upload(
         file,
-        activeSystemId,
+        targetSystemId,
         datasetName || file.name,
         timestampColumn,
       );
 
       setActiveDatasetId(uploadedDataset.id);
+      if (uploadedDataset.systemId) {
+        setActiveSystemId(uploadedDataset.systemId);
+      }
       queryClient.invalidateQueries({ queryKey: ['datasets'] });
+      queryClient.invalidateQueries({ queryKey: ['systems'] });
 
       // Step 2: Trigger Anomaly Detection
       setStepMessage(`Running ${selectedMethod} detector over ${uploadedDataset.rowCount} rows...`);
@@ -526,7 +535,7 @@ export const UploadPage: React.FC = () => {
 
         <button
           onClick={handleRunDetection}
-          disabled={!file || !activeSystemId || isProcessing}
+          disabled={!file || isProcessing}
           className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-300 dark:disabled:bg-slate-800 text-white rounded-xl font-bold text-sm shadow-md flex items-center gap-2 transition disabled:cursor-not-allowed"
         >
           {isProcessing ? (
