@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard,
   UploadCloud,
@@ -11,7 +11,10 @@ import {
   Activity,
   Zap,
   Sliders,
+  LogOut,
 } from 'lucide-react';
+import { useAppDispatch } from '../../features/common/hooks';
+import { logout } from '../../features/common/authSlice';
 
 const NAV_ITEMS = [
   { label: 'Smart Electrical', path: '/electrical', icon: Zap },
@@ -26,6 +29,24 @@ const NAV_ITEMS = [
 ];
 
 export const Sidebar: React.FC = () => {
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      await dispatch(logout());
+    } catch (err) {
+      console.error('Logout error:', err);
+    } finally {
+      try {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        sessionStorage.clear();
+      } catch {}
+      navigate('/login');
+    }
+  };
+
   return (
     <aside className="w-64 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col justify-between h-screen flex-shrink-0 z-20">
       <div>
@@ -68,12 +89,22 @@ export const Sidebar: React.FC = () => {
         </nav>
       </div>
 
-      {/* Footer Info */}
-      <div className="p-4 border-t border-slate-200 dark:border-slate-800 text-[11px] text-slate-400">
-        <div className="font-semibold text-slate-700 dark:text-slate-300">
-          Predictive Maintenance v2.0
+      {/* Logout & Footer Info */}
+      <div className="p-3 border-t border-slate-200 dark:border-slate-800 space-y-2">
+        <button
+          onClick={handleLogout}
+          className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 hover:text-rose-700 dark:hover:text-rose-300 transition-all group"
+        >
+          <LogOut className="w-4 h-4 flex-shrink-0 group-hover:-translate-x-0.5 transition-transform" />
+          <span>Sign Out</span>
+        </button>
+
+        <div className="px-2 pt-1 border-t border-slate-100 dark:border-slate-800/60 text-[10px] text-slate-400">
+          <div className="font-semibold text-slate-700 dark:text-slate-300">
+            Predictive Maintenance v2.0
+          </div>
+          <div>NestJS + TF.js + RUL Engine</div>
         </div>
-        <div>NestJS + TF.js + RUL Engine</div>
       </div>
     </aside>
   );
