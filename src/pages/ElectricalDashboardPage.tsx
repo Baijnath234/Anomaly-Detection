@@ -385,3 +385,4 @@ export const ElectricalDashboardPage: React.FC = () => {
     </div>
   );
 };
+

@@ -131,3 +131,4 @@ export const electricalApi = {
   getTickets: async (): Promise<MaintenanceTicket[]> =>
     (await apiClient.get('/api/automation/tickets')).data,
 };
+

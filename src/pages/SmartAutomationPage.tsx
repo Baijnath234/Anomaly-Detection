@@ -250,3 +250,4 @@ export const SmartAutomationPage: React.FC = () => {
     </div>
   );
 };
+
