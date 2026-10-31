@@ -10,6 +10,8 @@ import {
   LiveMonitorPage,
   ReportsPage,
   SignInPage,
+  ElectricalDashboardPage,
+  SmartAutomationPage,
 } from './pages';
 import Register from './pages/Register';
 import ForgotPassword from './pages/forgotPassword';
@@ -24,7 +26,9 @@ const App: React.FC = () => {
     <Routes>
       {/* 7 Anomaly Detection & Repair Assistant Pages inside AppLayout */}
       <Route element={<AppLayout />}>
-        <Route path="/" element={<DashboardPage />} />
+        <Route path="/" element={<ElectricalDashboardPage />} />
+        <Route path="/electrical" element={<ElectricalDashboardPage />} />
+        <Route path="/automation" element={<SmartAutomationPage />} />
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/upload" element={<UploadPage />} />
         <Route path="/analysis" element={<AnalysisPage />} />

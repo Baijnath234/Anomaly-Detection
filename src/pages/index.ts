@@ -6,3 +6,5 @@ export { ProblemsPage } from './ProblemsPage';
 export { ExpiryPage } from './ExpiryPage';
 export { LiveMonitorPage } from './LiveMonitorPage';
 export { ReportsPage } from './ReportsPage';
+export { ElectricalDashboardPage } from './ElectricalDashboardPage';
+export { SmartAutomationPage } from './SmartAutomationPage';

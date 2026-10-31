@@ -9,9 +9,13 @@ import {
   Radio,
   FileText,
   Activity,
+  Zap,
+  Sliders,
 } from 'lucide-react';
 
 const NAV_ITEMS = [
+  { label: 'Smart Electrical', path: '/electrical', icon: Zap },
+  { label: 'Home Automation', path: '/automation', icon: Sliders },
   { label: 'Dashboard', path: '/', icon: LayoutDashboard },
   { label: 'Upload & Configure', path: '/upload', icon: UploadCloud },
   { label: 'Analysis', path: '/analysis', icon: LineChart },
