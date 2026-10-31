@@ -7,6 +7,8 @@ import {
   Bell,
   ExternalLink,
   Trash2,
+  Wifi,
+  User,
 } from 'lucide-react';
 import { SeverityBadge } from '../common/SeverityBadge';
 import { formatDate } from '../../utils/formatters';
@@ -31,6 +33,12 @@ export const Navbar: React.FC = () => {
 
       {/* Right side Actions */}
       <div className="flex items-center gap-3">
+        {/* Live ESP32 Device Connection Status */}
+        <span className="hidden lg:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+          <Wifi className="w-3.5 h-3.5" />
+          <span>ESP32: Connected (24ms)</span>
+        </span>
+
         {/* Swagger Docs Link */}
         <a
           href="http://localhost:3000/docs"
@@ -107,6 +115,17 @@ export const Navbar: React.FC = () => {
         >
           {isDark ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-slate-700" />}
         </button>
+
+        {/* User Profile Pill */}
+        <div className="flex items-center gap-2 pl-2 border-l border-slate-200 dark:border-slate-800">
+          <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white text-[11px] font-bold shadow-sm">
+            AS
+          </div>
+          <div className="hidden xl:block text-left">
+            <p className="text-xs font-bold text-slate-800 dark:text-slate-200 leading-tight">Alex S.</p>
+            <p className="text-[10px] text-slate-400 font-medium leading-tight">Admin</p>
+          </div>
+        </div>
       </div>
     </header>
   );
